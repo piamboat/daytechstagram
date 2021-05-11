@@ -16,13 +16,13 @@ export class Comment extends BaseEntity {
     @UpdateDateColumn()
     updated_at: Date
 
-    @ManyToOne(type => User, user => user.comments, { eager: false })
+    @ManyToOne(type => User, user => user.comments, { eager: false, onDelete: 'CASCADE' })
     user: User
 
     @Column()
     userId: number
 
-    @ManyToOne(type => Post, post => post.comments, { eager: false })
+    @ManyToOne(type => Post, post => post.comments, { eager: false, onDelete: 'CASCADE' })
     post: Post
 
     @Column()
