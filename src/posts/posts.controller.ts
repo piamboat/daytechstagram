@@ -20,10 +20,6 @@ export class PostsController {
     @UseInterceptors(FileInterceptor('image', {
         storage: diskStorage({
             destination: './upload',
-            filename: (req, image, cb) => {
-                const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('')
-                return cb(null, `${randomName}${extname(image.originalname)}`)
-            }
         })
     }))
     @UsePipes(ValidationPipe)
@@ -34,7 +30,7 @@ export class PostsController {
     ): Promise<post> {
         if (image) {
             const post = await this.postsService.createPost(createPostDto, user)
-            const imageFile = post.id + extname(image.filename)
+            const imageFile = post.id + extname(image.originalname)
             fsExtra.move( image.path, `upload/${imageFile}` )
             post.image = imageFile
             await post.save()
