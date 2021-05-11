@@ -17,11 +17,7 @@ export class PostsController {
     constructor (private postsService: PostsService) {}
 
     @Post()
-    @UseInterceptors(FileInterceptor('image', {
-        storage: diskStorage({
-            destination: './upload',
-        })
-    }))
+    @UseInterceptors(FileInterceptor('image'))
     @UsePipes(ValidationPipe)
     async createPost(
         @UploadedFile() image,
