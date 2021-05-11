@@ -7,9 +7,7 @@ import { GetUser } from 'src/users/get-user.decorator';
 import { User } from '../users/user.entity';
 import { Post as post } from './post.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import * as fsExtra from 'fs-extra';
-import { extname } from 'path';
+import { Express } from 'express'
 
 @Controller('posts')
 @UseGuards(AuthGuard())
@@ -19,22 +17,12 @@ export class PostsController {
     @Post()
     @UseInterceptors(FileInterceptor('image'))
     @UsePipes(ValidationPipe)
-    async createPost(
-        @UploadedFile() image,
+    createPost(
+        @UploadedFile() image: Express.Multer.File,
         @Body() createPostDto: CreatePostDto,
         @GetUser() user: User,    
     ): Promise<post> {
-        if (image) {
-            const post = await this.postsService.createPost(createPostDto, user)
-            const imageFile = post.id + extname(image.originalname)
-            fsExtra.move( image.path, `upload/${imageFile}` )
-            post.image = imageFile
-            await post.save()
-    
-            return post
-        }
-
-        return this.postsService.createPost(createPostDto, user)
+        return this.postsService.createPost(createPostDto, user, image)
     }
 
     @Get()

@@ -16,8 +16,9 @@ export class PostsService {
     async createPost(
         createPostDto: CreatePostDto,
         user: User,
+        image: Express.Multer.File
     ): Promise<Post> {
-        return this.postRepository.createPost(createPostDto, user)
+        return this.postRepository.createPost(createPostDto, user, image)
     }
 
     async getPosts(
