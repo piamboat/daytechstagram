@@ -1,4 +1,4 @@
-import { Controller, Get, Post, UsePipes, ValidationPipe, Body, Query, UseGuards, Param, ParseIntPipe, Patch, Delete } from '@nestjs/common';
+import { Controller, Get, Post, UsePipes, ValidationPipe, Body, Query, UseGuards, Param, ParseIntPipe, Patch, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { GetPostsFilterDto } from './dto/get-posts-filter.dto';
@@ -6,6 +6,10 @@ import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/users/get-user.decorator';
 import { User } from '../users/user.entity';
 import { Post as post } from './post.entity';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import * as fsExtra from 'fs-extra';
+import { extname } from 'path';
 
 @Controller('posts')
 @UseGuards(AuthGuard())
@@ -13,11 +17,31 @@ export class PostsController {
     constructor (private postsService: PostsService) {}
 
     @Post()
+    @UseInterceptors(FileInterceptor('image', {
+        storage: diskStorage({
+            destination: './upload',
+            filename: (req, image, cb) => {
+                const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('')
+                return cb(null, `${randomName}${extname(image.originalname)}`)
+            }
+        })
+    }))
     @UsePipes(ValidationPipe)
-    createPost(
+    async createPost(
+        @UploadedFile() image,
         @Body() createPostDto: CreatePostDto,
         @GetUser() user: User,    
     ): Promise<post> {
+        if (image) {
+            const post = await this.postsService.createPost(createPostDto, user)
+            const imageFile = post.id + extname(image.filename)
+            fsExtra.move( image.path, `upload/${imageFile}` )
+            post.image = imageFile
+            await post.save()
+    
+            return post
+        }
+
         return this.postsService.createPost(createPostDto, user)
     }
 

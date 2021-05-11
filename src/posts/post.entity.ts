@@ -5,10 +5,10 @@ import { User } from '../users/user.entity';
 export class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
-/*
-    @Column()
-    image_url: string
-*/
+
+    @Column({ default: 'noimage.jpeg' })
+    image: string
+
     @Column()
     text: string
 
