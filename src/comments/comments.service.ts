@@ -27,6 +27,7 @@ export class CommentsService {
         return this.commentRepository.getComments(getCommentFilterDto, user)
     }
 
+    // comment_id
     async getCommentById(
         id: number,
         user: User,
@@ -35,6 +36,19 @@ export class CommentsService {
 
         if (!found) {
             throw new NotFoundException(`Comment with id: ${id} not found`)
+        }
+
+        return found
+    }
+
+    async getCommentByPostId(
+        postId: number,
+        user: User,
+        ): Promise<Comment> {
+        const found = await this.commentRepository.findOne({ where: { postId, userId: user.id } })
+
+        if (!found) {
+            throw new NotFoundException(`Comment with id: ${postId} not found`)
         }
 
         return found

@@ -1,5 +1,6 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { User } from '../users/user.entity';
+import { Comment } from '../comments/comment.entity';
 
 @Entity()
 export class Post extends BaseEntity {
@@ -23,4 +24,7 @@ export class Post extends BaseEntity {
 
     @Column()
     userId: number
+
+    @OneToMany(type => Comment, comment => comment.post, { eager: true })
+    comments: Comment
 }

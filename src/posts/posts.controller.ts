@@ -51,7 +51,7 @@ export class PostsController {
     }
 
     @Delete('/:id')
-    deleteTask(
+    deletePost(
         @Param('id', ParseIntPipe) id: number,
         @GetUser() user: User,
         ): Promise<void> {

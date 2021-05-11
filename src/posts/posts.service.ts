@@ -5,6 +5,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { User } from '../users/user.entity';
 import { Post } from './post.entity';
 import { GetPostsFilterDto } from './dto/get-posts-filter.dto';
+import * as fsExtra from 'fs-extra';
 
 @Injectable()
 export class PostsService {
@@ -16,7 +17,7 @@ export class PostsService {
     async createPost(
         createPostDto: CreatePostDto,
         user: User,
-        image: Express.Multer.File
+        image: Express.Multer.File,
     ): Promise<Post> {
         return this.postRepository.createPost(createPostDto, user, image)
     }
@@ -57,10 +58,16 @@ export class PostsService {
         id: number,
         user: User,
     ): Promise<void> {
+        const post = await this.getPostById(id, user)
+        const image = post.image
         const result = await this.postRepository.delete({ id, userId: user.id })
 
         if (result.affected === 0) {
             throw new NotFoundException(`Post with id: ${id} not found`)
+        }
+        else
+        {
+            await fsExtra.remove(`upload/${image}`);
         }
     }
 }

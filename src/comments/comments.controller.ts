@@ -29,6 +29,7 @@ export class CommentsController {
         return this.commentsService.getComments(getCommentsFilterDto, user)
     }
 
+    // comment_id
     @Get('/:id')
     getCommentById(
         @Param('id', ParseIntPipe) id: number,
@@ -36,6 +37,15 @@ export class CommentsController {
         ): Promise<Comment> {
         return this.commentsService.getCommentById(id, user)
     }
+
+    @Get('/:postId')
+    getCommentByPostId(
+        @Param('postId', ParseIntPipe) postId: number,
+        @GetUser() user: User,
+        ): Promise<Comment> {
+        return this.commentsService.getCommentByPostId(postId, user)
+    }
+    
 
     @Patch('/:id/text')
     updateCommentText(
@@ -47,7 +57,7 @@ export class CommentsController {
     }
 
     @Delete('/:id')
-    deleteTask(
+    deleteComment(
         @Param('id', ParseIntPipe) id: number,
         @GetUser() user: User,
         ): Promise<void> {

@@ -10,11 +10,12 @@ export class CommentRepository extends Repository<Comment> {
         createCommentDto: CreateCommentDto,
         user: User,
         ): Promise<Comment> {
-        const { text } = createCommentDto
+        const { text, postId } = createCommentDto
 
         const comment = new Comment()
         comment.text = text
         comment.user = user
+        comment.postId = postId
         await comment.save()
 
         delete comment.user //it doesn't delete comment.user in database, just delete information of user before return response to the frontend

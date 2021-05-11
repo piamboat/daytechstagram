@@ -1,3 +1,4 @@
+import { Post } from 'src/posts/post.entity';
 import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { User } from '../users/user.entity';
 
@@ -20,4 +21,10 @@ export class Comment extends BaseEntity {
 
     @Column()
     userId: number
+
+    @ManyToOne(type => Post, post => post.comments, { eager: false })
+    post: Post
+
+    @Column()
+    postId: number
 }
