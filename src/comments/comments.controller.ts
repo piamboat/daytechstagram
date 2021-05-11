@@ -7,7 +7,7 @@ import { User } from '../users/user.entity';
 import { Comment } from './comment.entity';
 import { GetCommentsFilterDto } from './dto/get-comments-filter.dto';
 
-@Controller('posts')
+@Controller('comments')
 @UseGuards(AuthGuard())
 export class CommentsController {
     constructor (private commentsService: CommentsService) {}
